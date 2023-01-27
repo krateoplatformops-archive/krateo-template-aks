@@ -24,3 +24,5 @@ spec:
   dependsOn:
     - configuration: "xpkg.upbound.io/crossplane-contrib/provider-helm"
       version: ">=v0.10.0-0"
+    - configuration: "xpkg.upbound.io/upbound/provider-azure"
+      version: ">=v0.14.1"
