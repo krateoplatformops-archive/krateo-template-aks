@@ -13,7 +13,6 @@ spec:
     - aks
     - stack
     - infrastructure
-    - rds
   links:
     - url: https://github.com/<% organizationName %>/<% repositoryName %>
       title: <% organizationName %>/<% repositoryName %>
