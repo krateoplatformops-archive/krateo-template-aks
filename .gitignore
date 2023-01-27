@@ -1,0 +1,11 @@
+# For macOS development
+.DS_Store
+# AKS Kubeconfig
+kubeconfig-aks
+
+# Debug files
+template-service-deployment.yaml
+temp.yaml
+kong-svc.yaml
+microservice-ingress.yaml
+microservicepoc-crd.yaml

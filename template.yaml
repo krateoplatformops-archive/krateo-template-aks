@@ -1,0 +1,71 @@
+apiVersion: krateo.io/v1alpha1
+kind: Template
+metadata:
+  name: aks-template
+spec:
+  owner: simone.ragonesi@kiratech.it
+  title: AKS
+  description: Krateo AKS Template
+  icon: fa-brands fa-microsoft
+  tags:
+    - aks
+  widgets:
+    - title: Name and description
+      description: Name and description of the stack.
+      properties:
+        - title: Name
+          description: The name of the component
+          required: true
+          key: name
+        - title: Description
+          key: description
+          description: Help others understand what this deployment does.
+          required: true
+          default: AKS Stack sample
+        - title: Namespace
+          key: namespace
+          description: Krateo namespace for the stack.
+          required: true
+          default: krateo-system
+    - title: Kubernetes
+      box: Kubernetes cluster name and network name.
+      boxStyle: info
+      properties:
+        - key: clusterName
+          title: Cluster Name
+          description: The name of the cluster
+          required: true
+        - key: networkName
+          title: Network name
+          description: The VPC network to use
+          required: true
+        - key: clusterNodes
+          title: Cluster Nodes
+          description: The number of nodes in the cluster
+          required: true
+          type: number
+          default: "3"
+        - key: maxClusterNodes
+          title: Max Cluster Nodes
+          description: The maximum number of nodes in the cluster
+          required: true
+          type: number
+          default: "5"
+
+    - title: Git repository destination
+      box: Set the destination repository.
+      properties:
+        - title: Endpoint
+          key: destinationEndpoint
+          description: github.com / gitlab.com / bitbucket.org
+          required: true
+          type: endpoint
+        - key: organizationName
+          title: Repository Organization
+          required: true
+          description: Organization name
+          default: krateoplatformops
+        - key: repositoryName
+          title: Repository Name
+          required: true
+          description: The name of the repository

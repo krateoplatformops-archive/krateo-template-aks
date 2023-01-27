@@ -1,0 +1,301 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: aks.deployment.krateo.io
+  labels:
+    platform: azure
+spec:
+  group: deployment.krateo.io
+  names:
+    kind: AksStack
+    plural: aksstack
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          properties:
+            spec:
+              properties:
+                owner:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+                icon:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                links:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                      title:
+                        type: string
+                      icon:
+                        type: string
+                plugins:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      value:
+                        type: string
+                      values:
+                        type: array
+                        items:
+                          type: string
+                      type:
+                        type: string
+                      icon:
+                        type: string
+                      endpointName:
+                        type: string
+                values:
+                  type: object
+                  description: Aks Stack deployment values
+                  properties:
+                    namespace:
+                      type: string
+                    endpointName:
+                      type: string
+                    organizationName:
+                      type: string
+                    repositoryName:
+                      type: string
+                    description:
+                      type: string
+                    destinationApiUrl:
+                      type: string
+                    eks:
+                      type: object
+                      properties:
+                        clusterName: #ex cluster ref
+                          type: string
+                        region:
+                          type: string
+                        resourcesVpcConfig:
+                          type: object
+                          properties:
+                            endpointPrivateAccess:
+                              type: boolean
+                            endpointPublicAccess:
+                              type: boolean
+                            subnetIdRefs:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                        roleArnRef: #.name
+                          type: string
+                        writeConnectionSecretToRef:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            namespace:
+                              type: string
+                    network:
+                      type: object
+                      properties:
+                        networkName:
+                          type: string
+                        vpc:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            region:
+                              type: string
+                            cidrBlock:
+                              type: string
+                            enableDnsSupport:
+                              type: boolean
+                            enableDnsHostNames:
+                              type: boolean
+                            providerConfigRef:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                        internetGateway:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            region:
+                              type: string
+                            vpcIdRef: #.name
+                              type: string
+                            providerConfigRef: #.name
+                              type: string
+                        subnets:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            zone:
+                              type: string
+                            access:
+                              type: string
+                            region:
+                              type: string
+                            mapPublicIPOnLaunch:
+                              type: boolean
+                            cidrBlock:
+                              type: string
+                            availabilityZone:
+                              type: string
+                            vpcIdRef: #.name
+                              type: string
+                            providerConfigRef: #.name
+                              type: string
+                        routeTable:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            region:
+                              type: string
+                            vpcIdRef: #.name
+                              type: string
+                            routes:
+                              type: object #TODO Check
+                              properties:
+                                destinationCidrBlock:
+                                  type: string
+                                gatewayIdRef: #.name
+                                  type: string
+                            associations:
+                              type: object
+                              properties:
+                                subnetIdRef: #.name
+                                  type: string
+                            providerConfigRef: #.name
+                              type: string
+                    nodeGroup:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        region:
+                          type: string
+                        clusterNameRef: #.name
+                          type: string
+                        scalingConfig:
+                          type: object
+                          properties:
+                            minSize:
+                              type: integer
+                            maxSize:
+                              type: integer
+                            desiredSize:
+                              type: integer
+                        instanceTypes:
+                          type: object #todo array
+                          properties:
+                            instanceType:
+                              type: string
+                        subnetRefs:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                        nodeRoleRef: #.name
+                          type: string
+                        providerConfigRef: #.name
+                          type: string
+                    rds:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        region:
+                          type: string
+                        allocatedStorage:
+                          type: integer
+                        autoMinorVersionUpgrade:
+                          type: boolean
+                        backupRetentionPeriod:
+                          type: integer
+                        caCertificateIdentifier:
+                          type: string
+                        copyTagsToSnapshot:
+                          type: boolean
+                        dbInstanceClass:
+                          type: string
+                        deletionProtection:
+                          type: boolean
+                        enableIAMDatabaseAuthentication:
+                          type: boolean
+                        enablePerformanceInsights:
+                          type: boolean
+                        engine:
+                          type: string
+                        engineVersion:
+                          type: string
+                        licenseModel:
+                          type: string
+                        masterUsername:
+                          type: string
+                        multiAZ:
+                          type: boolean
+                        skipFinalSnapshotBeforeDeletion:
+                          type: boolean
+                        port:
+                          type: integer
+                        publiclyAccessible:
+                          type: boolean
+                        storageEncrypted:
+                          type: boolean
+                        storageType:
+                          type: string
+                        writeConnectionSecretToRef:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            namespace:
+                              type: string
+                        providerConfigRef: #.name
+                          type: string
+                    fromRepo:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                        provider:
+                          type: string
+                        apiUrl:
+                          type: string
+                        repositoryName:
+                          type: string
+                        organizationName:
+                          type: string
+                        schema:
+                          type: string
+                    toRepo:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                        provider:
+                          type: string
+                        apiUrl:
+                          type: string
+                        repositoryName:
+                          type: string
+                        organizationName:
+                          type: string
+                        schema:
+                          type: string

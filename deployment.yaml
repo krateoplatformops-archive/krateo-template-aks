@@ -1,0 +1,65 @@
+# {{=<% %>=}}
+---
+apiVersion: deployment.krateo.io/v1alpha1
+kind: Aks
+metadata:
+  name: <%#norm%>{{name}}<%/norm%>-aks
+spec:
+  owner: simone
+  title: <% name %>
+  description: <% description %>
+  icon: "fa-brands fa-microsoft"
+  tags:
+    - aks
+    - stack
+    - infrastructure
+    - rds
+  links:
+    - url: https://github.com/<% organizationName %>/<% repositoryName %>
+      title: <% organizationName %>/<% repositoryName %>
+      icon: "fa-brands fa-git"
+    - url: https://kiratech.aksapps.com/start#/
+      title: AKS Console
+      icon: "fa-brands fa-microsoft"
+  plugins:
+    - name: resources
+      value: <%#norm%>{{name}}<%/norm%>-aks-stack
+      type: argocd
+      icon: fa-solid fa-cookie
+      endpointName: argocd
+    - name: kubernetes
+      value: deploymentId
+      type: kubernetes
+      icon: fa-brands fa-docker
+  values:
+    organizationName: <% organizationName %>
+    repositoryName: <% repositoryName %>
+    destinationApiUrl: <% destinationEndpoint.target %>
+    description: AKS sample
+    endpointName: <% destinationEndpoint.friendlyName %>
+    namespace: <% namespace %>
+    eks:
+      clusterName: <% clusterName %>
+    nodeGroup:
+      scalingConfig:
+        minSize: <% clusterNodes %>
+        maxSize: <% maxClusterNodes %>
+        desiredSize: <% clusterNodes %>
+    network:
+      networkName: <% networkName %>
+    rds:
+      name: <% rdsName %>
+      region: <% rdsRegion %>
+      allocatedStorage: <% rdsDataDiskSizeGb %>
+      dbInstanceClass: <% rdsInstanceClass %>
+      engineVersion: "<% rdsEngineVersion %>"
+      storageType: <% rdsStorageType %>
+    fromRepo:
+      schema: https
+      organizationName: krateoplatformops
+      repositoryName: krateo-template-aks
+    toRepo:
+      schema: https
+      organizationName: <% organizationName %>
+      repositoryName: <% repositoryName %>
+      apiUrl: https://api.github.com

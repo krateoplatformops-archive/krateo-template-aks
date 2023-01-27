@@ -1,0 +1,765 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: aks.deployment.krateo.io
+  labels:
+    platform: azure
+spec:
+  compositeTypeRef:
+    apiVersion: deployment.krateo.io/v1alpha1
+    kind: Aks
+  resources:
+    - base:
+        apiVersion: azure.crossplane.io/v1beta1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: Secret
+            secretRef:
+              namespace: krateo-system
+              name: azure-creds-secret
+              key: credentials
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-azure-pc"
+        - fromFieldPath: "spec.values.namespace"
+          toFieldPath: "spec.credentials.secretRef.namespace"
+    - base:
+        apiVersion: aks.azure.crossplane.io/v1beta1
+        kind: Cluster
+        spec:
+          forProvider:
+            region: eu-central-1
+            resourcesVpcConfig:
+              endpointPrivateAccess: true
+              endpointPublicAccess: true
+          writeConnectionSecretToRef:
+            namespace: krateo-system
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "metadata.name"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.resourcesVpcConfig.subnetIdRefs[0].name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-sn0"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.resourcesVpcConfig.subnetIdRefs[1].name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-sn1"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "spec.forProvider.roleArnRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-controlplane"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "spec.writeConnectionSecretToRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-eks-kubeconfig"
+        - fromFieldPath: "spec.values.namespace"
+          toFieldPath: "spec.writeConnectionSecretToRef.namespace"
+    - base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: VPC
+        spec:
+          forProvider:
+            region: eu-central-1
+            cidrBlock: 10.1.0.0/16
+            enableDnsSupport: true
+            enableDnsHostNames: true
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "metadata.name"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+    - base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: InternetGateway
+        spec:
+          forProvider:
+            region: eu-central-1
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ig"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.vpcIdRef.name"
+    - base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: Subnet
+        metadata:
+          labels:
+            zone: eu-central-1a
+            access: private
+        spec:
+          forProvider:
+            region: eu-central-1
+            mapPublicIPOnLaunch: true
+            cidrBlock: 10.1.1.0/24
+            availabilityZone: eu-central-1a
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-sn0"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.vpcIdRef.name"
+    - base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: Subnet
+        metadata:
+          labels:
+            zone: eu-central-1b
+            access: private
+        spec:
+          forProvider:
+            region: eu-central-1
+            mapPublicIPOnLaunch: true
+            cidrBlock: 10.1.2.0/24
+            availabilityZone: eu-central-1b
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-sn1"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.vpcIdRef.name"
+    - base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: RouteTable
+        spec:
+          forProvider:
+            region: eu-central-1
+            routes:
+              - destinationCidrBlock: 0.0.0.0/0
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-rt"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.vpcIdRef.name"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.routes[0].gatewayIdRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ig"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.associations[0].subnetIdRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-sn0"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.associations[1].subnetIdRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-sn1"
+    - base:
+        apiVersion: eks.aws.crossplane.io/v1alpha1
+        kind: NodeGroup
+        spec:
+          forProvider:
+            region: eu-central-1
+            instanceTypes:
+              - t3.xlarge
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "spec.forProvider.clusterName"
+        - fromFieldPath: "spec.values.nodeGroup.scalingConfig.minSize"
+          toFieldPath: "spec.forProvider.scalingConfig.minSize"
+        - fromFieldPath: "spec.values.nodeGroup.scalingConfig.maxSize"
+          toFieldPath: "spec.forProvider.scalingConfig.maxSize"
+        - fromFieldPath: "spec.values.nodeGroup.scalingConfig.desiredSize"
+          toFieldPath: "spec.forProvider.scalingConfig.desiredSize"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.subnetRefs[0].name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-sn0"
+        - fromFieldPath: "spec.values.network.networkName"
+          toFieldPath: "spec.forProvider.subnetRefs[1].name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-sn1"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "spec.forProvider.nodeRoleRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole"
+    - base:
+        apiVersion: database.aws.crossplane.io/v1beta1
+        kind: RDSInstance
+        spec:
+          forProvider:
+            autoMinorVersionUpgrade: true
+            backupRetentionPeriod: 0
+            caCertificateIdentifier: rds-ca-2019
+            copyTagsToSnapshot: false
+            deletionProtection: false
+            enableIAMDatabaseAuthentication: false
+            enablePerformanceInsights: false
+            engine: postgres
+            licenseModel: postgresql-license
+            masterUsername: amministratore
+            multiAZ: false
+            skipFinalSnapshotBeforeDeletion: true
+            port: 5432
+            publiclyAccessible: true
+            storageEncrypted: false
+          writeConnectionSecretToRef:
+            namespace: krateo-system
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.rds.name"
+          toFieldPath: "metadata.name"
+        - fromFieldPath: "spec.values.rds.region"
+          toFieldPath: "spec.forProvider.region"
+        - fromFieldPath: "spec.values.rds.allocatedStorage"
+          toFieldPath: "spec.forProvider.allocatedStorage"
+        - fromFieldPath: "spec.values.rds.dbInstanceClass"
+          toFieldPath: "spec.forProvider.dbInstanceClass"
+        - fromFieldPath: "spec.values.rds.engineVersion"
+          toFieldPath: "spec.forProvider.engineVersion"
+        - fromFieldPath: "spec.values.rds.storageType"
+          toFieldPath: "spec.forProvider.storageType"
+        - fromFieldPath: "spec.values.eks.clusterName" # ex component id
+          toFieldPath: "spec.writeConnectionSecretToRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-rdspostgresql-conn"
+        - fromFieldPath: "spec.values.namespace"
+          toFieldPath: "spec.writeConnectionSecretToRef.namespace"
+    - base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Role
+        spec:
+          forProvider:
+            assumeRolePolicyDocument: |
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": [
+                                "eks.amazonaws.com"
+                            ]
+                        },
+                        "Action": [
+                            "sts:AssumeRole"
+                        ]
+                    }
+                ]
+              }
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-controlplane"
+    - base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.roles.policyAttachment.name"
+          toFieldPath: "meatdata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-controlplane"
+        - fromFieldPath: "spec.values.eks.clusterName" #ex component id
+          toFieldPath: "spec.forProvider.roleNameRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-controlplane"
+    - base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Role
+        spec:
+          forProvider:
+            assumeRolePolicyDocument: |
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": [
+                                "ec2.amazonaws.com"
+                            ]
+                        },
+                        "Action": [
+                            "sts:AssumeRole"
+                        ]
+                    }
+                ]
+              }
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "metadata.labels.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole"
+    - base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole-policy0"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "spec.forProvider.roleNameSelector.matchLabels.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole"
+    - base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole-policy1"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "spec.forProvider.roleNameSelector.matchLabels.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole"
+    - base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.providerConfigRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-aws-pc"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole-policy2"
+        - fromFieldPath: "spec.values.eks.clusterName"
+          toFieldPath: "spec.forProvider.roleNameSelector.matchLabels.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-ng-noderole"
+    - base:
+        apiVersion: github.krateo.io/v1alpha1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: Secret
+            secretRef:
+              namespace: krateo-system
+              key: token
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "spec.forProvider.deploymentId"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-github-pc"
+        - fromFieldPath: "spec.values.endpointName"
+          toFieldPath: "spec.credentials.secretRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-endpoint"
+        - fromFieldPath: "spec.values.toRepo.apiUrl"
+          toFieldPath: "spec.apiUrl"
+        - fromFieldPath: "spec.namespace"
+          toFieldPath: "spec.credentials.secretRef.namespace"
+    - base:
+        apiVersion: github.krateo.io/v1alpha1
+        kind: Repo
+        spec:
+          forProvider:
+            initialize: true
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "spec.forProvider.deploymentId"
+        - fromFieldPath: "spec.values.toRepo.organizationName"
+          toFieldPath: "spec.forProvider.org"
+        - fromFieldPath: "spec.values.toRepo.repositoryName"
+          toFieldPath: "spec.forProvider.name"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.providerConfigRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-github-pc"
+    - base:
+        apiVersion: git.krateo.io/v1alpha1
+        kind: ProviderConfig
+        spec:
+          deploymentServiceUrl: http://deployment-service.krateo-system.svc
+          fromRepoCredentials:
+            authMethod: basic
+            source: Secret
+            secretRef:
+              namespace: krateo-system
+              key: token
+          toRepoCredentials:
+            authMethod: basic
+            source: Secret
+            secretRef:
+              namespace: krateo-system
+              key: token
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-git-pc"
+        - fromFieldPath: "spec.values.endpointName"
+          toFieldPath: "spec.fromRepoCredentials.secretRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-endpoint"
+        - fromFieldPath: "spec.values.endpointName"
+          toFieldPath: "spec.toRepoCredentials.secretRef.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-endpoint"
+        - fromFieldPath: "spec.namespace"
+          toFieldPath: "spec.deploymentServiceUrl"
+          transforms:
+            - type: string
+              string:
+                fmt: "http://deployment-service.%s.svc"
+        - fromFieldPath: "spec.namespace"
+          toFieldPath: "spec.fromRepoCredentials.secretRef.namespace"
+        - fromFieldPath: "spec.namespace"
+          toFieldPath: "spec.toRepoCredentials.secretRef.namespace"
+    - base:
+        apiVersion: git.krateo.io/v1alpha1
+        kind: Repo
+        spec:
+          deletionPolicy: Orphan
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: "spec.values.fromRepo.organizationName"
+              - fromFieldPath: "spec.values.fromRepo.repositoryName"
+            strategy: string
+            string:
+              fmt: "https://github.com/%s/%s"
+          toFieldPath: "spec.forProvider.fromRepo.url"
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: "spec.values.toRepo.organizationName"
+              - fromFieldPath: "spec.values.toRepo.repositoryName"
+            strategy: string
+            string:
+              fmt: "https://github.com/%s/%s"
+          toFieldPath: "spec.forProvider.toRepo.url"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.providerConfigRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-git-pc"
+    - base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: InjectedIdentity
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-k8s-pc-in"
+      readinessChecks:
+        - type: None
+    - base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Application
+              metadata:
+                namespace: krateo-system
+              spec:
+                project: default
+                source:
+                  targetRevision: HEAD
+                  path: .
+                destination:
+                  server: https://kubernetes.default.svc
+                  namespace: krateo-system
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "spec.forProvider.manifest.metadata.labels[deploymentId]"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "metadata.name"
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-argocd-app-object"
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.forProvider.manifest.metadata.name"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.providerConfigRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-k8s-pc-in"
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: "spec.values.toRepo.organizationName"
+              - fromFieldPath: "spec.values.toRepo.repositoryName"
+            strategy: string
+            string:
+              fmt: "https://github.com/%s/%s"
+          toFieldPath: "spec.forProvider.manifest.spec.source.repoURL"
+        - fromFieldPath: "spec.values.namespace"
+          toFieldPath: "spec.forProvider.manifest.metadata.namespace"
+        - fromFieldPath: "spec.values.namespace"
+          toFieldPath: "spec.forProvider.manifest.spec.destination.namespace"
+    # - base:
+    #     apiVersion: kubernetes.crossplane.io/v1alpha1
+    #     kind: Object
+    #     spec:
+    #       forProvider:
+    #         manifest:
+    #           apiVersion: v1
+    #           kind: ConfigMap
+    #           metadata:
+    #             namespace: krateo-system
+    #   patches:
+    #     - fromFieldPath: "metadata.uid"
+    #       toFieldPath: "metadata.labels[deploymentId]"
+    #     - fromFieldPath: "metadata.uid"
+    #       toFieldPath: "spec.forProvider.manifest.metadata.labels[deploymentId]"
+    #     - fromFieldPath: "metadata.name"
+    #       toFieldPath: "metadata.name"
+    #       transforms:
+    #         - type: string
+    #           string:
+    #             fmt: "%s-awsstack-values"
+    #     - fromFieldPath: metadata.name
+    #       toFieldPath: spec.providerConfigRef.name
+    #       transforms:
+    #         - type: string
+    #           string:
+    #             fmt: "%s-provider-k8s-pc-in"
+    #     - type: CombineFromComposite
+    #       combine:
+    #         variables:
+    #           - fromFieldPath: "spec.values.toRepo.organizationName"
+    #           - fromFieldPath: "spec.values.toRepo.repositoryName"
+    #           - fromFieldPath: "spec.values.toRepo.schema"
+    #           - fromFieldPath: "spec.values.endpointName"
+    #         strategy: string
+    #         string:
+    #           fmt: '{
+    #             "organizationName": "%s",
+    #             "repositoryName": "%s",
+    #             "schema": "%s",
+    #             "apiUrl": "https://api.github.com",
+    #             "endpointName": "%s"
+    #             }'
+    #       toFieldPath: "spec.forProvider.manifest.data.values"
+    #     - fromFieldPath: metadata.name
+    #       toFieldPath: spec.forProvider.manifest.metadata.name
+    #       transforms:
+    #         - type: string
+    #           string:
+    #             fmt: "%s-awsstack-cm"
+    #     - fromFieldPath: spec.values.namespace
+    #       toFieldPath: spec.forProvider.manifest.metadata.namespace
