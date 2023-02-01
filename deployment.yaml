@@ -37,7 +37,7 @@ spec:
     description: AKS sample
     endpointName: <% destinationEndpoint.friendlyName %>
     namespace: <% namespace %>
-    eks:
+    aks:
       clusterName: <% clusterName %>
     nodeGroup:
       scalingConfig:
@@ -46,13 +46,6 @@ spec:
         desiredSize: <% clusterNodes %>
     network:
       networkName: <% networkName %>
-    rds:
-      name: <% rdsName %>
-      region: <% rdsRegion %>
-      allocatedStorage: <% rdsDataDiskSizeGb %>
-      dbInstanceClass: <% rdsInstanceClass %>
-      engineVersion: "<% rdsEngineVersion %>"
-      storageType: <% rdsStorageType %>
     fromRepo:
       schema: https
       organizationName: krateoplatformops
