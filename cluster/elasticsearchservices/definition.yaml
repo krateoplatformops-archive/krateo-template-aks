@@ -1,12 +1,12 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: xservices.azure.aksstack.upbound.io
+  name: xelasticsearchservices.azure.aksstack.upbound.io
 spec:
   group: azure.aksstack.upbound.io
   names:
-    kind: XServices
-    plural: xservices
+    kind: XElasticsearchServices
+    plural: xelasticsearchservices
   versions:
   - name: v1alpha1
     served: true
@@ -22,13 +22,13 @@ spec:
                 type: object
                 description: Configuration for operators.
                 properties:
-                  vault:
+                  elasticsearch:
                     type: object
-                    description: Configuration for the vault operator.
+                    description: Configuration for the elasticsearch operator.
                     properties:
                       version:
                         type: string
-                        description: vault operator version to run.
+                        description: elasticsearch operator version to run.
               providerConfigRef:
                 type: object
                 description: "A reference to the ProviderConfig of the cluster that services should be deployed to."

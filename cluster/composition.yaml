@@ -7,12 +7,12 @@ spec:
     apiVersion: azure.aksstack.upbound.io/v1alpha1
     kind: XCluster
   resources:
-    - base:
-        apiVersion: azure.aksstack.upbound.io/v1alpha1
-        kind: XNetwork
-      patches:
-        - fromFieldPath: spec.id
-          toFieldPath: spec.id
+    #- base:
+        #apiVersion: azure.aksstack.upbound.io/v1alpha1
+        #kind: XNetwork
+      #patches:
+        #- fromFieldPath: spec.id
+          #toFieldPath: spec.id
     - base:
         apiVersion: azure.aksstack.upbound.io/v1alpha1
         kind: XAKS
@@ -25,17 +25,43 @@ spec:
           toFieldPath: spec.writeConnectionSecretToRef.name
         - fromFieldPath: spec.claimRef.namespace
           toFieldPath: spec.writeConnectionSecretToRef.namespace
+        - fromFieldPath: spec.parameters.location
+          toFieldPath: spec.parameters.location
+        - fromFieldPath: spec.parameters.resourceGroup
+          toFieldPath: spec.parameters.resourceGroup
+        - fromFieldPath: spec.parameters.kubernetesVersion
+          toFieldPath: spec.parameters.kubernetesVersion
         - fromFieldPath: spec.parameters.nodes.count
           toFieldPath: spec.parameters.nodes.count
         - fromFieldPath: spec.parameters.nodes.size
           toFieldPath: spec.parameters.nodes.size
     - base:
         apiVersion: azure.aksstack.upbound.io/v1alpha1
-        kind: XServices
+        kind: XVaultServices
       patches:
         - fromFieldPath: spec.id
           toFieldPath: metadata.name
         - fromFieldPath: spec.id
           toFieldPath: spec.providerConfigRef.name
-        - fromFieldPath: spec.parameters.services.operators.vault.version
+        - fromFieldPath: spec.parameters.vaultservices.operators.vault.version
           toFieldPath: spec.operators.vault.version
+    #- base:
+        #apiVersion: azure.aksstack.upbound.io/v1alpha1
+        #kind: XKeptnServices
+      #patches:
+        #- fromFieldPath: spec.id
+          #toFieldPath: metadata.name
+        #- fromFieldPath: spec.id
+          #toFieldPath: spec.providerConfigRef.name
+        #- fromFieldPath: spec.parameters.keptnservices.operators.keptn.version
+          #toFieldPath: spec.operators.keptn.version
+    - base:
+        apiVersion: azure.aksstack.upbound.io/v1alpha1
+        kind: XElasticsearchServices
+      patches:
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+        - fromFieldPath: spec.id
+          toFieldPath: spec.providerConfigRef.name
+        - fromFieldPath: spec.parameters.elasticsearchservices.operators.elasticsearch.version
+          toFieldPath: spec.operators.elasticsearch.version

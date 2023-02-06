@@ -30,6 +30,15 @@ spec:
                 type: object
                 description: Cluster configuration parameters.
                 properties:
+                  location:
+                    type: string
+                    description: The region where the Managed Kubernetes Cluster should be created (eg westeurope). Changing this forces a new resource to be created.
+                  resourceGroup:
+                    type: string
+                    description: Specifies the Resource Group where the Managed Kubernetes Cluster should exist. Changing this forces a new resource to be created.
+                  kubernetesVersion:
+                    type: string
+                    description: Version of Kubernetes specified when creating the AKS managed cluster. If not specified, the latest recommended version will be used at provisioning time (but won't auto-upgrade)
                   nodes:
                     type: object
                     description: Cluster node configuration parameters.
@@ -43,9 +52,9 @@ spec:
                     required:
                     - count
                     - size
-                  services:
+                  vaultservices:
                     type: object
-                    description: Services configuration parameters.
+                    description: Vault Service configuration parameters.
                     properties:
                       operators:
                         type: object
@@ -53,11 +62,41 @@ spec:
                         properties:
                           vault:
                             type: object
-                            description: Configuration for the vault operator.
+                            description: Configuration for the Vault operator.
                             properties:
                               version:
                                 type: string
-                                description: vault operator version to run.
+                                description: Vault operator version to run.
+                  #keptnservices:
+                    #type: object
+                    #description: Keptn Service configuration parameters.
+                    #properties:
+                      #operators:
+                        #type: object
+                        #description: Configuration for operators.
+                        #properties:
+                          #keptn:
+                            #type: object
+                            #description: Configuration for the Keptn operator.
+                            #properties:
+                              #version:
+                                #type: string
+                                #description: Keptn operator version to run.
+                  elasticsearchservices:
+                    type: object
+                    description: Elasticsearch Service configuration parameters.
+                    properties:
+                      operators:
+                        type: object
+                        description: Configuration for operators.
+                        properties:
+                          elasticsearch:
+                            type: object
+                            description: Configuration for the Elasticsearch operator.
+                            properties:
+                              version:
+                                type: string
+                                description: Elasticsearch operator version to run.
                 required:
                 - nodes
             required:
