@@ -22,9 +22,9 @@ spec:
       #operators:
         #keptn:
           #version: "1.1.0"
-    elasticsearchservices:
-      operators:
-        elasticsearch:
-          version: "8.5.1"
+    #elasticsearchservices:
+      #operators:
+        #elasticsearch:
+          #version: "8.5.1"
   writeConnectionSecretToRef:
     name: azure-aks-stack-kubeconfig #Must be unique for each instance

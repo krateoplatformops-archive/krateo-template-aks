@@ -82,21 +82,21 @@ spec:
                               #version:
                                 #type: string
                                 #description: Keptn operator version to run.
-                  elasticsearchservices:
-                    type: object
-                    description: Elasticsearch Service configuration parameters.
-                    properties:
-                      operators:
-                        type: object
-                        description: Configuration for operators.
-                        properties:
-                          elasticsearch:
-                            type: object
-                            description: Configuration for the Elasticsearch operator.
-                            properties:
-                              version:
-                                type: string
-                                description: Elasticsearch operator version to run.
+                  #elasticsearchservices:
+                    #type: object
+                    #description: Elasticsearch Service configuration parameters.
+                    #properties:
+                      #operators:
+                        #type: object
+                        #description: Configuration for operators.
+                        #properties:
+                          #elasticsearch:
+                            #type: object
+                            #description: Configuration for the Elasticsearch operator.
+                            #properties:
+                              #version:
+                                #type: string
+                                #description: Elasticsearch operator version to run.
                 required:
                 - nodes
             required:
