@@ -11,3 +11,6 @@ microservice-ingress.yaml
 microservicepoc-crd.yaml
 crossplane-azure-provider.yaml
 crossplane-azure-provider-config.yaml
+
+# local test folder
+local/**
