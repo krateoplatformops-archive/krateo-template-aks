@@ -54,12 +54,6 @@ spec:
           toFieldPath: spec.forProvider.dnsPrefix
         - fromFieldPath: spec.values.nodeSize
           toFieldPath: spec.forProvider.defaultNodePool[0].vmSize
-          transforms:
-            - type: map
-              map:
-                small: Standard_B2s
-                medium: Standard_B4ms
-                large: Standard_B8ms
         - fromFieldPath: spec.values.clusterNodes
           toFieldPath: spec.forProvider.defaultNodePool[0].nodeCount
         - fromFieldPath: spec.values.namespace
