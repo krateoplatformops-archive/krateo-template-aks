@@ -1,7 +1,7 @@
 # {{=<% %>=}}
 ---
 apiVersion: deployment.krateo.io/v1alpha1
-kind: Aks
+kind: Cluster
 metadata:
   name: <%#norm%>{{name}}<%/norm%>-aks
 spec:
