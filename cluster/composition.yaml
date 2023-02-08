@@ -1,7 +1,7 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: aks.deployment.krateo.io
+  name: aksstack.deployment.krateo.io
 spec:
   compositeTypeRef:
     apiVersion: deployment.krateo.io/v1alpha1
