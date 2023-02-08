@@ -54,7 +54,7 @@ spec:
         #   toFieldPath: spec.forProvider.resourceGroupName
         - fromFieldPath: spec.values.clusterVersion
           toFieldPath: spec.forProvider.kubernetesVersion
-        - fromFieldPath: spec.parameters.nodes.size
+        - fromFieldPath: spec.values.clusterVersion
           toFieldPath: spec.forProvider.defaultNodePool[0].vmSize
         - fromFieldPath: spec.values.clusterNodes
           toFieldPath: spec.forProvider.defaultNodePool[0].nodeCount
