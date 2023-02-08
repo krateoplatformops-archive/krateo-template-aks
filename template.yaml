@@ -49,7 +49,7 @@ spec:
           title: Cluster Nodes
           description: The number of nodes in the cluster
           required: true
-          type: number
+          type: string
           default: "3"
         - key: nodeSize
           title: node vm size
