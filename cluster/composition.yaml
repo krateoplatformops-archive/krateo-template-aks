@@ -31,6 +31,7 @@ spec:
         kind: KubernetesCluster
         spec:
           forProvider:
+            resourceGroupName: test-rg # patched
             location: West US 2
             kubernetesVersion: "1.24.3"
             defaultNodePool:
@@ -40,6 +41,8 @@ spec:
             identity:
               - type: "SystemAssigned"
       patches:
+        - fromFieldPath: spec.values.name
+          toFieldPath: spec.forProvider.resourceGroupName
         - fromFieldPath: spec.values.name
           toFieldPath: metadata.name
           transforms:
@@ -81,16 +84,8 @@ spec:
       patches:
         - fromFieldPath: spec.values.name
           toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-rg"
         - fromFieldPath: spec.values.name
           toFieldPath: metadata.annotations[upbound.io/external-name]
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-rg"
         - fromFieldPath: spec.values.name
           toFieldPath: metadata.labels[azure.krateo.io/aksstack]
         - fromFieldPath: metadata.name
