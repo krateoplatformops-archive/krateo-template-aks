@@ -93,25 +93,37 @@ spec:
                 fmt: "%s-rg"
         - fromFieldPath: spec.values.name
           toFieldPath: metadata.labels[azure.krateo.io/aksstack]
-    - base:
-        apiVersion: network.azure.upbound.io/v1beta1
-        kind: VirtualNetwork
-        spec:
-          forProvider:
-            resourceGroupNameSelector:
-              matchControllerRef: true
-            location: West US 2
-            addressSpace:
-              - 192.168.0.0/16
-      patches:
-        - fromFieldPath: spec.values.name
-          toFieldPath: metadata.labels[app]
-        - fromFieldPath: spec.values.name
-          toFieldPath: metadata.name
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.providerConfigRef.name
           transforms:
             - type: string
               string:
-                fmt: "%s-vnet"
+                fmt: "%s-provider-azure-pc"
+    # - base:
+    #     apiVersion: network.azure.upbound.io/v1beta1
+    #     kind: VirtualNetwork
+    #     spec:
+    #       forProvider:
+    #         resourceGroupNameSelector:
+    #           matchControllerRef: true
+    #         location: West US 2
+    #         addressSpace:
+    #           - 192.168.0.0/16
+    #   patches:
+    #     - fromFieldPath: spec.values.name
+    #       toFieldPath: metadata.labels[app]
+    #     - fromFieldPath: spec.values.name
+    #       toFieldPath: metadata.name
+    #       transforms:
+    #         - type: string
+    #           string:
+    #             fmt: "%s-vnet"
+    #     - fromFieldPath: metadata.name
+    #       toFieldPath: spec.providerConfigRef.name
+    #       transforms:
+    #         - type: string
+    #           string:
+    #             fmt: "%s-provider-azure-pc"
     - base:
         apiVersion: network.azure.upbound.io/v1beta1
         kind: Subnet
@@ -134,3 +146,9 @@ spec:
             - type: string
               string:
                 fmt: "%s-sn"
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.providerConfigRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-azure-pc"
