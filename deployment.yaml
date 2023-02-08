@@ -37,6 +37,6 @@ spec:
     id: <% clusterId %>
     location: <% location %>
     clusterVersion: <% clusterVersion %>
-    clusterNodes: "<% clusterNodes %>"
+    clusterNodes: <% clusterNodes %>
     nodeSize: <% nodeSize %>
     vaultVersion: <% vaultVersion %>

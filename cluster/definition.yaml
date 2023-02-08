@@ -78,7 +78,7 @@ spec:
                     clusterVersion:
                       type: string
                     clusterNodes:
-                      type: string
+                      type: number
                     nodeSize:
                       type: string
                     vaultVersion:
