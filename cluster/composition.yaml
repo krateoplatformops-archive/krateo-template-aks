@@ -41,6 +41,8 @@ spec:
             identity:
               - type: "SystemAssigned"
       patches:
+        - fromFieldPath: spec.values.location
+          toFieldPath: spec.forProvider.location
         - fromFieldPath: spec.values.name
           toFieldPath: spec.forProvider.resourceGroupName
         - fromFieldPath: spec.values.name
@@ -82,6 +84,8 @@ spec:
           forProvider:
             location: West US 2
       patches:
+        - fromFieldPath: spec.values.location
+          toFieldPath: spec.forProvider.location
         - fromFieldPath: spec.values.name
           toFieldPath: metadata.name
         - fromFieldPath: spec.values.name
@@ -105,6 +109,8 @@ spec:
             addressSpace:
               - 192.168.0.0/16
       patches:
+        - fromFieldPath: spec.values.location
+          toFieldPath: spec.forProvider.location
         - fromFieldPath: spec.values.name
           toFieldPath: metadata.labels[app]
         - fromFieldPath: spec.values.name
