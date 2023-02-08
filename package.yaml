@@ -4,6 +4,6 @@ metadata:
   name: krateo-template-aks
 spec:
   package: ghcr.io/krateoplatformops/krateo-template-aks:latest
-  packagePullPolicy: IfNotPresent
+  packagePullPolicy: Always
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 1
