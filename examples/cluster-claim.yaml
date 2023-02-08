@@ -1,30 +1,20 @@
-apiVersion: azure.aksstack.upbound.io/v1alpha1
-kind: Cluster
+apiVersion: deployment.krateo.io/v1alpha1
+kind: AksStack
 metadata:
   name: azure-aks-stack-poc
   namespace: default
   annotations:
     uptest.upbound.io/post-assert-hook: testhooks/delete-release.sh
 spec:
-  id: azure-aks-stack # the cluster name
-  parameters:
+  values:
+    name: azure-aks-stack
+    description: azure-aks-stack
+    namespace: krateo-system
+    id: azure-aks-stack
     location: westeurope
-    resourceGroup: bancasella
-    kubernetesVersion: "1.24.3"
-    nodes:
-      count: 3 #1-100
-      size: Standard_D4s_v3
-    vaultservices:
-      operators:
-        vault:
-          version: "0.22.1"
-    #keptnservices:
-      #operators:
-        #keptn:
-          #version: "1.1.0"
-    #elasticsearchservices:
-      #operators:
-        #elasticsearch:
-          #version: "8.5.1"
-  writeConnectionSecretToRef:
-    name: azure-aks-stack-kubeconfig #Must be unique for each instance
+    clusterVersion: "1.24.3"
+    clusterNodes: "3"
+    nodeSize: Standard_D4s_v3
+    vaultVersion: "0.22.1"
+  #writeConnectionSecretToRef:
+    #name: azure-aks-stack-kubeconfig #Must be unique for each instance
