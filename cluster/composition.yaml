@@ -14,6 +14,16 @@ spec:
         #- fromFieldPath: spec.id
           #toFieldPath: spec.id
     - base:
+        apiVersion: aws.crossplane.io/v1beta1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: Secret
+            secretRef:
+              namespace: krateo-system
+              name: azure-account-creds-secret
+              key: credentials
+    - base:
         apiVersion: azure.aksstack.upbound.io/v1alpha1
         kind: XAKS
       connectionDetails:
