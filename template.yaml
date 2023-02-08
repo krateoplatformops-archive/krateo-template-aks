@@ -31,26 +31,38 @@ spec:
       box: Kubernetes cluster name and network name.
       boxStyle: info
       properties:
-        - key: clusterName
-          title: Cluster Name
-          description: The name of the cluster
+        - key: clusterId
+          title: Cluster ID
+          description: The ID of the cluster
           required: true
-        - key: networkName
-          title: Network name
-          description: The VPC network to use
+        - key: location
+          title: Cluster location
+          description: Cluster location (azure zone)
           required: true
+          default: westeurope
+        - key: clusterVersion
+          title: Kubernetes version
+          description: Kubernetes version
+          required: true
+          default: "1.24.3"
         - key: clusterNodes
           title: Cluster Nodes
           description: The number of nodes in the cluster
           required: true
           type: number
           default: "3"
-        - key: maxClusterNodes
-          title: Max Cluster Nodes
-          description: The maximum number of nodes in the cluster
+        - key: nodeSize
+          title: node vm size
+          description: The azure VM size for cluster nodes
           required: true
-          type: number
-          default: "5"
+          default: Standard_D4s_v3
+    - title: Vault
+      properties:
+        - key: vaultVersion
+          title: vault version
+          description: helm chart version of hashicorp vault
+          required: true
+          default: "0.22.1"
 
     - title: Git repository destination
       box: Set the destination repository.
