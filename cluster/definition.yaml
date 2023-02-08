@@ -1,104 +1,85 @@
+---
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: xclusters.azure.aksstack.upbound.io
+  name: aks.deployment.krateo.io
+  labels:
+    platform: azure
 spec:
-  group: azure.aksstack.upbound.io
+  group: deployment.krateo.io
   names:
-    kind: XCluster
-    plural: xclusters
-  claimNames:
-    kind: Cluster
-    plural: clusters
-  connectionSecretKeys:
-  - kubeconfig
+    kind: AksStack
+    plural: aksstack
   versions:
-  - name: v1alpha1
-    served: true
-    referenceable: true
-    schema:
-      openAPIV3Schema:
-        type: object
-        properties:
-          spec:
-            type: object
-            properties:
-              id:
-                type: string
-                description: ID of this Cluster that other objects will use to refer to it.
-              parameters:
-                type: object
-                description: Cluster configuration parameters.
-                properties:
-                  location:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          properties:
+            spec:
+              properties:
+                owner:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+                icon:
+                  type: string
+                tags:
+                  type: array
+                  items:
                     type: string
-                    description: The region where the Managed Kubernetes Cluster should be created (eg westeurope). Changing this forces a new resource to be created.
-                  resourceGroup:
-                    type: string
-                    description: Specifies the Resource Group where the Managed Kubernetes Cluster should exist. Changing this forces a new resource to be created.
-                  kubernetesVersion:
-                    type: string
-                    description: Version of Kubernetes specified when creating the AKS managed cluster. If not specified, the latest recommended version will be used at provisioning time (but won't auto-upgrade)
-                  nodes:
+                links:
+                  type: array
+                  items:
                     type: object
-                    description: Cluster node configuration parameters.
                     properties:
-                      count:
-                        type: integer
-                        description: Desired node count, from 1 to 100.
-                      size:
+                      url:
                         type: string
-                        description: Size of node.
-                    required:
-                    - count
-                    - size
-                  vaultservices:
+                      title:
+                        type: string
+                      icon:
+                        type: string
+                plugins:
+                  type: array
+                  items:
                     type: object
-                    description: Vault Service configuration parameters.
                     properties:
-                      operators:
-                        type: object
-                        description: Configuration for operators.
-                        properties:
-                          vault:
-                            type: object
-                            description: Configuration for the Vault operator.
-                            properties:
-                              version:
-                                type: string
-                                description: Vault operator version to run.
-                  #keptnservices:
-                    #type: object
-                    #description: Keptn Service configuration parameters.
-                    #properties:
-                      #operators:
-                        #type: object
-                        #description: Configuration for operators.
-                        #properties:
-                          #keptn:
-                            #type: object
-                            #description: Configuration for the Keptn operator.
-                            #properties:
-                              #version:
-                                #type: string
-                                #description: Keptn operator version to run.
-                  #elasticsearchservices:
-                    #type: object
-                    #description: Elasticsearch Service configuration parameters.
-                    #properties:
-                      #operators:
-                        #type: object
-                        #description: Configuration for operators.
-                        #properties:
-                          #elasticsearch:
-                            #type: object
-                            #description: Configuration for the Elasticsearch operator.
-                            #properties:
-                              #version:
-                                #type: string
-                                #description: Elasticsearch operator version to run.
-                required:
-                - nodes
-            required:
-            - id
-            - parameters
+                      name:
+                        type: string
+                      value:
+                        type: string
+                      values:
+                        type: array
+                        items:
+                          type: string
+                      type:
+                        type: string
+                      icon:
+                        type: string
+                      endpointName:
+                        type: string
+                values:
+                  type: object
+                  description: Aks Stack deployment values
+                  properties:
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    namespace:
+                      type: string
+                    id:
+                      type: string
+                    location:
+                      type: string
+                    clusterVersion:
+                      type: string
+                    clusterNodes:
+                      type: string
+                    nodeSize:
+                      type: string
+                    vaultVersion:
+                      type: string

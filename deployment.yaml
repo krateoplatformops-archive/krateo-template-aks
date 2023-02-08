@@ -31,27 +31,12 @@ spec:
       type: kubernetes
       icon: fa-brands fa-docker
   values:
-    organizationName: <% organizationName %>
-    repositoryName: <% repositoryName %>
-    destinationApiUrl: <% destinationEndpoint.target %>
-    description: AKS sample
-    endpointName: <% destinationEndpoint.friendlyName %>
+    name: <% name %>
+    description: <% description %>
     namespace: <% namespace %>
-    aks:
-      clusterName: <% clusterName %>
-    nodeGroup:
-      scalingConfig:
-        minSize: <% clusterNodes %>
-        maxSize: <% maxClusterNodes %>
-        desiredSize: <% clusterNodes %>
-    network:
-      networkName: <% networkName %>
-    fromRepo:
-      schema: https
-      organizationName: krateoplatformops
-      repositoryName: krateo-template-aks
-    toRepo:
-      schema: https
-      organizationName: <% organizationName %>
-      repositoryName: <% repositoryName %>
-      apiUrl: https://api.github.com
+    id: <% clusterId %>
+    location: <% location %>
+    clusterVersion: <% clusterVersion %>
+    clusterNodes: <% clusterNodes %>
+    nodeSize: <% nodeSize %>
+    vaultVersion: <% vaultVersion %>

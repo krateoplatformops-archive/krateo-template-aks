@@ -1,11 +1,11 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xclusters.azure.aksstack.upbound.io
+  name: aks.deployment.krateo.io
 spec:
   compositeTypeRef:
-    apiVersion: azure.aksstack.upbound.io/v1alpha1
-    kind: XCluster
+    apiVersion: deployment.krateo.io/v1alpha1
+    kind: AksStack
   resources:
     #- base:
         #apiVersion: azure.aksstack.upbound.io/v1alpha1
@@ -19,31 +19,31 @@ spec:
       connectionDetails:
         - fromConnectionSecretKey: kubeconfig
       patches:
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.values.id
           toFieldPath: spec.id
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.values.id
           toFieldPath: spec.writeConnectionSecretToRef.name
         - fromFieldPath: spec.claimRef.namespace
           toFieldPath: spec.writeConnectionSecretToRef.namespace
-        - fromFieldPath: spec.parameters.location
+        - fromFieldPath: spec.values.location
           toFieldPath: spec.parameters.location
         - fromFieldPath: spec.parameters.resourceGroup
           toFieldPath: spec.parameters.resourceGroup
-        - fromFieldPath: spec.parameters.kubernetesVersion
+        - fromFieldPath: spec.values.clusterVersion
           toFieldPath: spec.parameters.kubernetesVersion
-        - fromFieldPath: spec.parameters.nodes.count
+        - fromFieldPath: spec.values.clusterNodes
           toFieldPath: spec.parameters.nodes.count
-        - fromFieldPath: spec.parameters.nodes.size
+        - fromFieldPath: spec.values.nodeSize
           toFieldPath: spec.parameters.nodes.size
     - base:
         apiVersion: azure.aksstack.upbound.io/v1alpha1
         kind: XVaultServices
       patches:
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.values.id
           toFieldPath: metadata.name
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.values.id
           toFieldPath: spec.providerConfigRef.name
-        - fromFieldPath: spec.parameters.vaultservices.operators.vault.version
+        - fromFieldPath: spec.values.vaultVersion
           toFieldPath: spec.operators.vault.version
     #- base:
         #apiVersion: azure.aksstack.upbound.io/v1alpha1

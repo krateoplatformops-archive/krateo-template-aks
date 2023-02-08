@@ -63,21 +63,3 @@ spec:
           description: helm chart version of hashicorp vault
           required: true
           default: "0.22.1"
-
-    - title: Git repository destination
-      box: Set the destination repository.
-      properties:
-        - title: Endpoint
-          key: destinationEndpoint
-          description: github.com / gitlab.com / bitbucket.org
-          required: true
-          type: endpoint
-        - key: organizationName
-          title: Repository Organization
-          required: true
-          description: Organization name
-          default: krateoplatformops
-        - key: repositoryName
-          title: Repository Name
-          required: true
-          description: The name of the repository
