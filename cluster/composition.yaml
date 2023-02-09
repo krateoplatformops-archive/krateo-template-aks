@@ -209,4 +209,24 @@ spec:
           transforms:
             - type: string
               string:
-                fmt: "%s-provider-azure-pc"
+                fmt: "%s-provider-helm-pc"
+
+    - base:
+        apiVersion: helm.crossplane.io/v1beta1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: Secret
+            secretRef:
+              namespace: krateo-system
+              name: azure-account-creds-secret
+              key: credentials
+      patches:
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-provider-helm-pc"
+      readinessChecks:
+        - type: None
