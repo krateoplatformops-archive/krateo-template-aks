@@ -182,8 +182,6 @@ spec:
                 enabled: true
                 serviceType: "LoadBalancer"
       patches:
-        - fromFieldPath: "metadata.uid"
-          toFieldPath: "metadata.labels[deploymentId]"
         - fromFieldPath: metadata.name
           toFieldPath: metadata.name
           transforms:
@@ -193,6 +191,8 @@ spec:
         # All Helm releases derive their labels and annotations from the XR.
         - fromFieldPath: metadata.labels
           toFieldPath: metadata.labels
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
         - fromFieldPath: metadata.annotations
           toFieldPath: metadata.annotations
         # All Helm releases derive the ProviderConfig to use from the XR.
