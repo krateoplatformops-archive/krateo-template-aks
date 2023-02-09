@@ -44,7 +44,7 @@ spec:
           title: Kubernetes version
           description: Kubernetes version
           required: true
-          default: "1.24.3"
+          default: "1.24.6"
         - key: clusterNodes
           title: Cluster Nodes
           description: The number of nodes in the cluster
