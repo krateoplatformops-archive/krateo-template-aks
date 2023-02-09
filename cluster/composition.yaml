@@ -77,27 +77,27 @@ spec:
                 fmt: "%s-provider-azure-pc"
       connectionDetails:
         - fromConnectionSecretKey: kubeconfig
-    - base:
-        apiVersion: azure.upbound.io/v1beta1
-        kind: ResourceGroup
-        spec:
-          forProvider:
-            location: West US 2
-      patches:
-        - fromFieldPath: spec.values.location
-          toFieldPath: spec.forProvider.location
-        - fromFieldPath: spec.values.name
-          toFieldPath: metadata.name
-        - fromFieldPath: spec.values.name
-          toFieldPath: metadata.annotations[upbound.io/external-name]
-        - fromFieldPath: spec.values.name
-          toFieldPath: metadata.labels[azure.krateo.io/aksstack]
-        - fromFieldPath: metadata.name
-          toFieldPath: spec.providerConfigRef.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-provider-azure-pc"
+    # - base:
+    #     apiVersion: azure.upbound.io/v1beta1
+    #     kind: ResourceGroup
+    #     spec:
+    #       forProvider:
+    #         location: West US 2
+    #   patches:
+    #     - fromFieldPath: spec.values.location
+    #       toFieldPath: spec.forProvider.location
+    #     - fromFieldPath: spec.values.name
+    #       toFieldPath: metadata.name
+    #     - fromFieldPath: spec.values.name
+    #       toFieldPath: metadata.annotations[upbound.io/external-name]
+    #     - fromFieldPath: spec.values.name
+    #       toFieldPath: metadata.labels[azure.krateo.io/aksstack]
+    #     - fromFieldPath: metadata.name
+    #       toFieldPath: spec.providerConfigRef.name
+    #       transforms:
+    #         - type: string
+    #           string:
+    #             fmt: "%s-provider-azure-pc"
     - base:
         apiVersion: network.azure.upbound.io/v1beta1
         kind: VirtualNetwork
