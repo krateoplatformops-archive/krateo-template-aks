@@ -223,7 +223,7 @@ spec:
               key: kubeconfig
       patches:
         - fromFieldPath: spec.values.name
-          toFieldPath: spec.writeConnectionSecretToRef.name
+          toFieldPath: spec.credentials.secretRef.name
           transforms:
             - type: string
               string:
