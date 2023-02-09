@@ -216,11 +216,7 @@ spec:
         kind: ProviderConfig
         spec:
           credentials:
-            source: Secret
-            secretRef:
-              namespace: krateo-system
-              name: azure-account-creds-secret
-              key: credentials
+            source: InjectedIdentity
       patches:
         - fromFieldPath: metadata.name
           toFieldPath: metadata.name
