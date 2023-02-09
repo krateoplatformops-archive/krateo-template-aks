@@ -216,13 +216,19 @@ spec:
         kind: ProviderConfig
         spec:
           credentials:
-            source: InjectedIdentity
+            source: Secret
+            secretRef:
+              name: cluster-config
+              namespace: crossplane-system
+              key: kubeconfig
       patches:
-        - fromFieldPath: metadata.name
-          toFieldPath: metadata.name
+        - fromFieldPath: spec.values.name
+          toFieldPath: spec.writeConnectionSecretToRef.name
           transforms:
             - type: string
               string:
-                fmt: "%s-provider-helm-pc"
+                fmt: "%s-aks"
+        - fromFieldPath: spec.writeConnectionSecretToRef.namespace
+          toFieldPath: spec.credentials.secretRef.namespace
       readinessChecks:
         - type: None
