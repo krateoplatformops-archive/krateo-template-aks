@@ -222,13 +222,13 @@ spec:
               namespace: crossplane-system
               key: kubeconfig
       patches:
+        - fromFieldPath: spec.values.namespace
+          toFieldPath: spec.credentials.secretRef.namespace
         - fromFieldPath: spec.values.name
           toFieldPath: spec.credentials.secretRef.name
           transforms:
             - type: string
               string:
                 fmt: "%s-aks"
-        - fromFieldPath: spec.writeConnectionSecretToRef.namespace
-          toFieldPath: spec.credentials.secretRef.namespace
       readinessChecks:
         - type: None
