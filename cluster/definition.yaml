@@ -83,3 +83,5 @@ spec:
                       type: string
                     vaultVersion:
                       type: string
+                    resourceGroupName:
+                      type: string

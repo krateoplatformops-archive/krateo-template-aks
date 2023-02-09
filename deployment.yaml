@@ -40,3 +40,4 @@ spec:
     clusterNodes: <% clusterNodes %>
     nodeSize: <% nodeSize %>
     vaultVersion: <% vaultVersion %>
+    resourceGroupName: <% resourceGroupName %>

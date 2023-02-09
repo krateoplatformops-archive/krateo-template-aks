@@ -41,11 +41,13 @@ spec:
             identity:
               - type: "SystemAssigned"
       patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
         - fromFieldPath: spec.values.clusterVersion
           toFieldPath: spec.forProvider.kubernetesVersion
         - fromFieldPath: spec.values.location
           toFieldPath: spec.forProvider.location
-        - fromFieldPath: spec.values.name
+        - fromFieldPath: spec.values.resourceGroupName
           toFieldPath: spec.forProvider.resourceGroupName
         - fromFieldPath: spec.values.name
           toFieldPath: metadata.name
@@ -155,3 +157,50 @@ spec:
     #         - type: string
     #           string:
     #             fmt: "%s-provider-azure-pc"
+    - base:
+        apiVersion: helm.crossplane.io/v1beta1
+        kind: Release
+        spec:
+          rollbackLimit: 3
+          forProvider:
+            namespace: vault
+            chart:
+              # from https://github.com/vault-community/helm-charts
+              # Note that default values are overridden by the patches below.
+              name: vault
+              repository: https://helm.releases.hashicorp.com
+              version: "0.22.1"
+            values:
+              server:
+                ha:
+                  enabled: true
+                  replicas: 3
+                  raft:
+                    enabled: true
+                    setNodeId: true
+              ui:
+                enabled: true
+                serviceType: "LoadBalancer"
+      patches:
+        - fromFieldPath: "metadata.uid"
+          toFieldPath: "metadata.labels[deploymentId]"
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-vault"
+        # All Helm releases derive their labels and annotations from the XR.
+        - fromFieldPath: metadata.labels
+          toFieldPath: metadata.labels
+        - fromFieldPath: metadata.annotations
+          toFieldPath: metadata.annotations
+        # All Helm releases derive the ProviderConfig to use from the XR.
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+        # Derive the vault operator image and tag from the XR.
+        - fromFieldPath: spec.values.vaultVersion
+          toFieldPath: spec.forProvider.chart.version
+        # Pass XR namespace to write connection secrets namespace
+        - fromFieldPath: spec.writeConnectionSecretToRef.namespace
+          toFieldPath: spec.writeConnectionSecretToRef.namespace

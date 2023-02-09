@@ -35,6 +35,10 @@ spec:
           title: Cluster ID
           description: The ID of the cluster
           required: true
+        - key: resourceGroupName
+          title: Resource Group
+          description: The resource group of the cluster
+          required: true
         - key: location
           title: Cluster location
           description: Cluster location (azure zone)
