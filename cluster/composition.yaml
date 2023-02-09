@@ -41,6 +41,8 @@ spec:
             identity:
               - type: "SystemAssigned"
       patches:
+        - fromFieldPath: spec.values.clusterVersion
+          toFieldPath: spec.forProvider.kubernetesVersion
         - fromFieldPath: spec.values.location
           toFieldPath: spec.forProvider.location
         - fromFieldPath: spec.values.name
