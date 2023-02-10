@@ -28,8 +28,8 @@ spec:
           required: true
           default: krateo-system
     - title: Kubernetes
-      box: Kubernetes cluster name and network name.
-      boxStyle: info
+#      box: Kubernetes cluster name and network name.
+#      boxStyle: info
       properties:
         - key: clusterId
           title: Cluster ID
